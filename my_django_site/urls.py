@@ -1,6 +1,7 @@
 """
 URL configuration for my_django_site project.
-
+This file maps URLs to views, including the admin panel and blog homepage.
+Django 项目总路由文件，配置网址与视图的对应关系，包含 admin 和博客首页。
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
 Examples:

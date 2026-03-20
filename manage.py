@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+"""
+Django's command-line utility for administrative tasks.
+This file is used to run commands like startserver, makemigrations, migrate, etc.
+Django 命令行工具，用于启动服务器、数据库迁移、创建管理员等操作。
+"""
 import os
 import sys
 

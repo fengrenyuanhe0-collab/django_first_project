@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 card mb-4 mt-3 left top">
+      <div class="card-body">
+        <h1>{% block title %} {{ post.title }} {% endblock title %}</h1>
+        <p class="text-muted">{{ post.author }} | {{ post.created_date }}</p>
+        <p class="card-text">{{ post.text | safe }}</p>
+      </div>
+    </div>
+    {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
+  </div>
+</div>
+
+{% endblock content %}
+
+<hr>
+<h4>Comments</h4>
+{% for comment in comments %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h6 class="card-subtitle text-muted">{{ comment.name }} | {{ comment.created_on }}</h6>
+            <p class="card-text">{{ comment.body }}</p>
+        </div>
+    </div>
+{% empty %}
+    <p>No comments yet. Be the first to comment!</p>
+{% endfor %}
+
+<hr>
+<h4>Leave a comment</h4>
+<form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit Comment</button>
+</form>
