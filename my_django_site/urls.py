@@ -20,5 +20,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blog.urls')),  # 把 blog 的 URL 包含进来
+    # 博客应用路由
+    path('', include('blog.urls')),
+    # Django自带登录/注销路由
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

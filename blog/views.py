@@ -1,47 +1,67 @@
-"""
-Defines the views for the blog application.
-This file contains the home view, which displays a list of all blog posts.
-blog 应用的视图文件，定义了首页视图，用于查询所有博客文章并传递给模板展示。
-"""
-from django.views.generic import ListView, DetailView
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+# blog/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 from .models import Post, Comment
-from .forms import CommentForm
+from .forms import PostForm, CommentForm
 
-# 首页文章列表
+from rest_framework import viewsets
+from .serializers import PostSerializer
+from .models import Post
+# 首页：显示所有已发布的博客
 class PostList(ListView):
     model = Post
     template_name = 'index.html'
     queryset = Post.objects.filter(status=1).order_by('-created_date')
     context_object_name = 'post_list'
 
-# 文章详情 + 评论提交（修复跳转逻辑）
+# 发布新博客（需要登录）
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'post_create.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.slug = form.instance.title.lower().replace(" ", "-").replace("_", "-")
+        return super().form_valid(form)
+
+# 博客详情页
 class PostDetail(DetailView):
     model = Post
     template_name = 'post_detail.html'
-    context_object_name = 'post'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(** kwargs)
-        # 传入评论列表和表单
-        context['comments'] = self.object.comments.filter(active=True)
+    def get_context_data(self,** kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.filter(active=True).order_by('-likes', '-created_on')
         context['comment_form'] = CommentForm()
         return context
 
-    # 处理评论提交（用更简单的方式）
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+# 添加评论（需要登录，自动关联用户）
+@login_required
+def add_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
         form = CommentForm(request.POST)
-        
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.post = self.object
+            comment.post = post
+            comment.user = request.user  # 自动关联登录用户
             comment.save()
-            # 修复跳转：直接拼 URL，避免依赖 get_absolute_url 出错
-            return HttpResponseRedirect(reverse('post_detail', args=[self.object.slug]))
-        
-        # 表单验证失败时返回原页面
-        context = self.get_context_data(object=self.object)
-        context['comment_form'] = form
-        return self.render_to_response(context)
+            return redirect('post_detail', slug=post.slug)
+    return redirect('post_detail', slug=post.slug)
+
+# 评论点赞
+def like_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    comment.likes += 1
+    comment.save()
+    return redirect('post_detail', slug=comment.post.slug)
+
+    # API VIEWSET
+class PostViewSet(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()

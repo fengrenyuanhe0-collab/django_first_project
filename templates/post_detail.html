@@ -1,38 +1,49 @@
+<!-- templates/post_detail.html -->
 {% extends 'base.html' %}
+
 {% block content %}
+<div style="max-width: 800px;">
+    <h2 style="color: #2196F3;">{{ post.title }}</h2>
+    <p style="color: #666; font-size: 14px;">By {{ post.author.username }} | {{ post.created_date|date:"F j, Y" }}</p>
+    <hr style="border: 1px solid #eee;">
+    <div style="line-height: 1.6;">{{ post.text|linebreaks }}</div>
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 card mb-4 mt-3 left top">
-      <div class="card-body">
-        <h1>{% block title %} {{ post.title }} {% endblock title %}</h1>
-        <p class="text-muted">{{ post.author }} | {{ post.created_date }}</p>
-        <p class="card-text">{{ post.text | safe }}</p>
-      </div>
-    </div>
-    {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
-  </div>
-</div>
+    <!-- 评论区 -->
+    <div style="margin-top: 40px;">
+        <h3 style="color: #2196F3;">Comments ({{ comments|length }})</h3>
+        {% for comment in comments %}
+        <div style="border-bottom: 1px solid #eee; padding: 15px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0;">
+                    {% if comment.user %}{{ comment.user.username }}{% else %}Anonymous{% endif %}
+                </h5>
+                <small style="color: #666;">{{ comment.created_on|date:"F j, Y, g:i a" }}</small>
+            </div>
+            <p style="margin: 10px 0;">{{ comment.body }}</p>
+            <div style="display: flex; align-items: center;">
+                <span style="margin-right: 10px;">❤️ {{ comment.likes }}</span>
+                <a href="{% url 'like_comment' comment.id %}" style="color: #2196F3; text-decoration: none; font-size: 14px;">Like</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
 
-{% endblock content %}
-
-<hr>
-<h4>Comments</h4>
-{% for comment in comments %}
-    <div class="card mb-2">
-        <div class="card-body">
-            <h6 class="card-subtitle text-muted">{{ comment.name }} | {{ comment.created_on }}</h6>
-            <p class="card-text">{{ comment.body }}</p>
+        <!-- 评论提交框 -->
+        <div style="margin-top: 20px;">
+            {% if user.is_authenticated %}
+            <h4 style="color: #2196F3;">Leave a Comment (as {{ user.username }})</h4>
+            <form method="POST" action="{% url 'add_comment' post.id %}">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    Post Comment
+                </button>
+            </form>
+            {% else %}
+            <p>Please <a href="{% url 'login' %}" style="color: #2196F3;">login</a> to leave a comment.</p>
+            {% endif %}
         </div>
     </div>
-{% empty %}
-    <p>No comments yet. Be the first to comment!</p>
-{% endfor %}
-
-<hr>
-<h4>Leave a comment</h4>
-<form method="post">
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-    <button type="submit" class="btn btn-primary">Submit Comment</button>
-</form>
+</div>
+{% endblock %}

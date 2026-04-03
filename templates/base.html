@@ -1,66 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Django Central</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
-    <meta name="google" content="notranslate" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django central</title>
+    <style>
+        /* 原有样式完整保留 */
+        .top-bar {
+            background-color: #2196F3;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .top-bar h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: normal;
+        }
+        .top-bar p {
+            margin: 5px 0 0;
+            font-size: 18px;
+        }
+        .sidebar-card {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 300px;
+            margin-left: auto;
+        }
+        .sidebar-card h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .btn-red {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+        }
+
+        /* 顶部栏按钮样式（统一放在右上角） */
+        .top-bar .btn-group {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .btn-top {
+            background: white;
+            color: #2196F3;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            line-height: 40px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-decoration: none;
+        }
+        .btn-top:hover {
+            background: #f5f5f5;
+        }
+        .btn-text {
+            background: white;
+            color: #2196F3;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .btn-text:hover {
+            background: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
-<style>
-    body {
-        font-family: "Roboto", sans-serif;
-        font-size: 17px;
-        background-color: #fdfdfd;
-    }
-    .shadow {
-        box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.1);
-    }
-    .btn-danger {
-        color: #fff;
-        background-color: #f00000;
-        border-color: #dc281e;
-    }
-    .masthead {
-        background: #3398E1;
-        height: auto;
-        padding-bottom: 15px;
-        box-shadow: 0 16px 48px #E3E7EB;
-        padding-top: 10px;
-    }
-</style>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow" id="mainNav">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">Django central</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item text-black">
-                    <a class="nav-link text-black font-weight-bold" href="#">About</a>
-                </li>
-                <li class="nav-item text-black">
-                    <a class="nav-link text-black font-weight-bold" href="#">Policy</a>
-                </li>
-                <li class="nav-item text-black">
-                    <a class="nav-link text-black font-weight-bold" href="#">Contact</a>
-                </li>
-            </ul>
+    <!-- 顶部蓝色栏（只在这里放按钮） -->
+    <div class="top-bar">
+        <h1>We Love Django As much as you do..!</h1>
+        <p>我们和你们一样热爱 Django！</p>
+        <div class="btn-group">
+            {% if user.is_authenticated %}
+                <!-- 登录后：显示加号 + 登出 -->
+                <a href="{% url 'new_post' %}" class="btn-top" title="New Post">+</a>
+                <a href="{% url 'logout' %}" class="btn-text">Logout</a>
+            {% else %}
+                <!-- 未登录：显示登录 -->
+                <a href="{% url 'login' %}" class="btn-text">Login</a>
+            {% endif %}
         </div>
     </div>
-</nav>
 
-{% block content %}
-<!-- Content Goes here -->
-{% endblock content %}
+    <!-- 主内容区（和原来一样） -->
+    <div class="container" style="display: flex; gap: 20px; max-width: 1200px; margin: 0 auto;">
+        <div style="flex: 1;">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="sidebar-card">
+            <h3>About Us 关于我们</h3>
+            <p>This awesome blog is made on the top of our Favourite full stack Framework 'Django', follow up the tutorial to learn how we made it..!</p>
+            <p>这个超棒的博客是基于我们最喜欢的全栈框架"Django"构建的，请跟随教程了解我们是如何制作的！</p>
+            <button class="btn-red">Know more! 了解更多！</button>
+        </div>
+    </div>
 
-<!-- Footer -->
-<footer class="py-3 bg-grey">
-    <p class="m-0 text-dark text-center ">right &copy; Django Central</p>
-</footer>
+    <!-- 底部版权 -->
+    <footer>
+        <p>right © Django Central</p>
+    </footer>
 </body>
 </html>
