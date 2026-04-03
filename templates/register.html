@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Django Blog{% endblock %}
+
+{% block content %}
+    <div style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h2 style="color: #2196F3; text-align: center; margin-bottom: 30px;">Register</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <!-- 显示表单字段 -->
+            {% for field in form %}
+                <div style="margin-bottom: 15px;">
+                    <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 5px; color: #666;">{{ field.label }}:</label>
+                    {{ field }}
+                    <!-- 显示字段错误 -->
+                    {% if field.errors %}
+                        <small style="color: #dc3545;">{{ field.errors.0 }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" style="width: 100%; background: #2196F3; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 16px;">
+                Register
+            </button>
+        </form>
+
+        <!-- 跳登录页 -->
+        <p style="text-align: center; margin-top: 20px; color: #666;">
+            Already have an account? <a href="{% url 'login' %}" style="color: #2196F3;">Login here</a>
+        </p>
+
+        <style>
+            input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+        </style>
+    </div>
+{% endblock %}

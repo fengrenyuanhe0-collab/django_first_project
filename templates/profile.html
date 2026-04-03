@@ -1,17 +1,61 @@
 <!-- templates/profile.html -->
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div style="max-width: 600px; margin: 0 auto;">
     <h2 style="color: #2196F3;">Your Profile</h2>
-    <form method="POST" style="margin-top: 20px;">
+    
+    <!-- ✅ 展示当前头像 -->
+    {% if form.instance.avatar %}
+    <div style="margin: 20px 0;">
+        <img src="{{ form.instance.avatar.url }}" alt="Avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+    </div>
+    {% endif %}
+
+    <!-- ✅ 新增enctype支持文件上传 + 展示表单错误 -->
+    <form method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
         {% csrf_token %}
-        <div style="margin-bottom: 15px;">
-            <label for="id_nickname">Nickname:</label>
-            {{ form.nickname }}
+        
+        <!-- 全局错误提示 -->
+        {% if form.non_field_errors %}
+        <div style="color: #dc3545; margin-bottom: 15px;">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
         </div>
+        {% endif %}
+
+        <!-- 昵称输入框 -->
+        <div style="margin-bottom: 15px;">
+            <label for="id_nickname" style="display: block; margin-bottom: 5px; font-weight: bold;">Nickname:</label>
+            {{ form.nickname }}
+            <!-- 昵称字段错误提示 -->
+            {% if form.nickname.errors %}
+            <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
+                {% for error in form.nickname.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 头像上传框 -->
+        <div style="margin-bottom: 15px;">
+            <label for="id_avatar" style="display: block; margin-bottom: 5px; font-weight: bold;">Avatar:</label>
+            {{ form.avatar }}
+            <!-- 头像字段错误提示 -->
+            {% if form.avatar.errors %}
+            <div style="color: #dc3545; font-size: 12px; margin-top: 5px;">
+                {% for error in form.avatar.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
         <button type="submit" style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-            Save Nickname
+            Save Profile
         </button>
     </form>
 </div>

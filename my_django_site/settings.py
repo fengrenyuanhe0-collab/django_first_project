@@ -29,18 +29,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
 
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    'blog.apps.BlogConfig',
-    'rest_framework',
-]
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -131,7 +122,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',  # 用完整的 AppConfig 路径
-   
+    'rest_framework',
 ]
 
 # my_django_site/settings.py
@@ -141,9 +132,25 @@ AUTH_USER_MODEL = 'auth.User'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',  # 恢复可视化界面
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny',
     ]
+}
+# settings.py
+# 媒体文件（用户上传的头像等）
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+# 登录成功后跳首页，不再跳默认的accounts/profile/（避免404）
+LOGIN_REDIRECT_URL = '/'
+
+# Django REST Framework 设置（开启漂亮界面）
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # 👈 这个就是漂亮界面
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
 }

@@ -1,128 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django central</title>
+    <title>{% block title %}Django Blog{% endblock %}</title>
     <style>
-        /* 原有样式完整保留 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* 顶部蓝色栏 */
         .top-bar {
             background-color: #2196F3;
             color: white;
             padding: 20px;
-            margin-bottom: 20px;
             position: relative;
-        }
-        .top-bar h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: normal;
-        }
-        .top-bar p {
-            margin: 5px 0 0;
-            font-size: 18px;
-        }
-        .sidebar-card {
-            border: 1px solid #eee;
-            border-radius: 4px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            max-width: 300px;
-            margin-left: auto;
-        }
-        .sidebar-card h3 {
-            margin-top: 0;
-            font-size: 18px;
-        }
-        .btn-red {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
+            margin-bottom: 30px;
         }
 
-        /* 顶部栏按钮样式（统一放在右上角） */
-        .top-bar .btn-group {
+        .top-bar h1 {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .top-bar p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* 右上角按钮组 */
+        .btn-group {
             position: absolute;
-            top: 50%;
             right: 20px;
+            top: 50%;
             transform: translateY(-50%);
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
-        .btn-top {
-            background: white;
-            color: #2196F3;
-            border: none;
+
+        /* 圆形加号按钮 */
+        .btn-add {
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 24px;
-            line-height: 40px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            text-decoration: none;
-        }
-        .btn-top:hover {
-            background: #f5f5f5;
-        }
-        .btn-text {
             background: white;
             color: #2196F3;
-            border: none;
-            padding: 8px 16px;
+            font-size: 24px;
+            text-align: center;
+            line-height: 42px;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-add:hover {
+            background: #f0f0f0;
+        }
+
+        /* 登录/登出/个人资料按钮 */
+        .btn-auth {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 14px;
             border-radius: 4px;
-            cursor: pointer;
             text-decoration: none;
             font-size: 14px;
         }
-        .btn-text:hover {
-            background: #f5f5f5;
+
+        .btn-auth:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 布局容器 */
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* 主内容 */
+        .content {
+            flex: 1;
+        }
+
+        /* 右侧关于卡片 */
+        .sidebar {
+            width: 300px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-card h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .sidebar-card p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .sidebar-card button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 底部 */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+            font-size: 14px;
+            margin-top: 40px;
         }
     </style>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <!-- 顶部蓝色栏（只在这里放按钮） -->
+    <!-- 顶部导航栏 -->
     <div class="top-bar">
         <h1>We Love Django As much as you do..!</h1>
-        <p>我们和你们一样热爱 Django！</p>
         <div class="btn-group">
             {% if user.is_authenticated %}
-                <!-- 登录后：显示加号 + 登出 -->
-                <a href="{% url 'new_post' %}" class="btn-top" title="New Post">+</a>
-                <a href="{% url 'logout' %}" class="btn-text">Logout</a>
+                <a href="{% url 'profile' %}" class="btn-auth">Profile</a>
+                <a href="{% url 'create_post' %}" class="btn-add" title="发布博客">+</a>
+                <a href="{% url 'logout' %}" class="btn-auth">Logout</a>
             {% else %}
-                <!-- 未登录：显示登录 -->
-                <a href="{% url 'login' %}" class="btn-text">Login</a>
+                <a href="{% url 'login' %}" class="btn-auth">Login</a>
             {% endif %}
         </div>
     </div>
 
-    <!-- 主内容区（和原来一样） -->
-    <div class="container" style="display: flex; gap: 20px; max-width: 1200px; margin: 0 auto;">
-        <div style="flex: 1;">
+    <!-- 主体内容 -->
+    <div class="container">
+        <div class="content">
             {% block content %}{% endblock %}
         </div>
-        <div class="sidebar-card">
-            <h3>About Us 关于我们</h3>
-            <p>This awesome blog is made on the top of our Favourite full stack Framework 'Django', follow up the tutorial to learn how we made it..!</p>
-            <p>这个超棒的博客是基于我们最喜欢的全栈框架"Django"构建的，请跟随教程了解我们是如何制作的！</p>
-            <button class="btn-red">Know more! 了解更多！</button>
+        <div class="sidebar">
+            <div class="sidebar-card">
+                <h3>About Us</h3>
+                <p>This awesome blog is made on the top of our Favourite full stack Framework 'Django'.</p>
+                <button>Know more!</button>
+            </div>
         </div>
     </div>
 
-    <!-- 底部版权 -->
+    <!-- 底部 -->
     <footer>
-        <p>right © Django Central</p>
+        <p>© 2025 Django Central. All rights reserved.</p>
     </footer>
 </body>
 </html>

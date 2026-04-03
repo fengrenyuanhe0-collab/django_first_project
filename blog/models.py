@@ -3,6 +3,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+# 用户资料：昵称、头像
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nickname = models.CharField(max_length=100, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+
+    def __str__(self):
+        return self.nickname or self.user.username
+        
 # 博客文章模型
 class Post(models.Model):
     STATUS_CHOICES = (
@@ -25,11 +34,12 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post_detail', args=[self.slug])
 
-# 评论模型（无新增字段，避免迁移问题）
+# 评论模型
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     body = models.TextField()
+    name = models.CharField(max_length=100)
     created_on = models.DateTimeField(auto_now_add=True)
     likes = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
@@ -38,7 +48,6 @@ class Comment(models.Model):
         ordering = ['-likes', '-created_on']
 
     def __str__(self):
-        # 直接使用用户名作为显示名称，无需 nickname 字段
         if self.user:
             return f'Comment by {self.user.username} on {self.post.title}'
         return f'Anonymous comment on {self.post.title}'

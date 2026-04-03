@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Login / Register - Django Blog{% endblock %}
+
+{% block content %}
+    <div style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h2 style="color: #2196F3; text-align: center; margin-bottom: 30px;">Login to Your Account</h2>
+
+        <!-- 显示错误信息（如果登录失败，提示可注册） -->
+        {% if form.errors %}
+            <div style="color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+                Your username/password is wrong. <br>
+                <small style="color: #dc3545;">If you don't have an account, please register first!</small>
+            </div>
+        {% endif %}
+
+        <!-- 登录表单 -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label for="{{ form.username.id_for_label }}" style="display: block; margin-bottom: 5px; color: #666;">Username:</label>
+                {{ form.username }}
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="{{ form.password.id_for_label }}" style="display: block; margin-bottom: 5px; color: #666;">Password:</label>
+                {{ form.password }}
+            </div>
+            
+            <button type="submit" style="width: 100%; background: #2196F3; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-bottom: 15px;">
+                Login
+            </button>
+            
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <!-- 核心：添加注册入口，一键跳注册页 -->
+        <div style="text-align: center; padding-top: 15px; border-top: 1px solid #eee;">
+            <p style="color: #666; margin: 0;">Don't have an account? </p>
+            <a href="{% url 'register' %}" style="color: #2196F3; text-decoration: none; font-weight: bold;">
+                Register Now →
+            </a>
+        </div>
+
+        <style>
+            input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+        </style>
+    </div>
+{% endblock %}
