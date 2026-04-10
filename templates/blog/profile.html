@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile-container">
+    <h2>Your Profile</h2>
+    
+    <!-- 显示用户信息 -->
+    <div class="profile-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+    </div>
+
+    <!-- 编辑个人资料表单 -->
+    <div class="profile-form">
+        <h3>Update Profile</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ profile_form.as_p }}
+            <button type="submit" class="btn-save">Save Changes</button>
+        </form>
+    </div>
+
+    <!-- 返回首页链接 -->
+    <p style="margin-top: 20px;">
+        <a href="{% url 'homepage' %}" class="btn-back">Back to Homepage</a>
+    </p>
+</div>
+
+<style>
+.profile-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.profile-info {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+.profile-form {
+    margin-bottom: 20px;
+}
+.btn-save {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-back {
+    color: #007bff;
+    text-decoration: none;
+}
+</style>
+{% endblock %}

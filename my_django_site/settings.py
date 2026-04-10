@@ -154,3 +154,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+# Email configuration for password reset (local test)
+# 邮件配置：本地测试时，重置链接输出到控制台
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

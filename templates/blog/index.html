@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 style="color: #2196F3;">Latest Blog Posts</h2>
+
+{% for post in post_list %}
+<div style="border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+    <h3><a href="{% url 'post_detail' post.slug %}" style="color: #2196F3; text-decoration: none;">{{ post.title }}</a></h3>
+    <p style="color: #666; font-size: 14px;">By {{ post.author }} | {{ post.created_date|date:"F j, Y" }}</p>
+    <p>{{ post.text|truncatewords:30 }}</p>
+    <a href="{% url 'post_detail' post.slug %}" style="color: #2196F3; text-decoration: none;">Read More →</a>
+</div>
+{% empty %}
+<p>No blog posts yet. Be the first to publish!</p>
+{% endfor %}
+{% endblock %}

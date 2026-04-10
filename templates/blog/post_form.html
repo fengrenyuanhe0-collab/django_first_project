@@ -1,28 +1,55 @@
-{% extends 'admin/base_site.html' %}
-
+{% extends 'base.html' %}
+{% block title %}Create New Blog Post{% endblock %}
 {% block content %}
-<div class="module aligned" style="margin:20px; padding:20px; background:#fff; border-radius:8px; box-shadow:0 0 5px #ccc;">
-    <h2 style="margin-bottom:20px;">Add Post</h2>
-    <form method="post" novalidate>
+<div style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h2 style="color: #2196F3; margin-bottom: 20px;">Create New Blog Post</h2>
+    
+    <form method="POST">
         {% csrf_token %}
         
-        <div class="form-row">
-            {{ form.title.label_tag }}
+        <!-- Title字段 -->
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Title:</label>
             {{ form.title }}
-            {{ form.title.errors }}
         </div>
-
-        <div class="form-row" style="margin-top:15px;">
-            {{ form.text.label_tag }}
-            {{ form.text }}
-            {{ form.text.errors }}
+        
+        <!-- Slug字段 -->
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Slug (auto-generated):</label>
+            {{ form.slug }}
+            <small style="color: #666;">Leave blank to auto-generate from title</small>
         </div>
-
-        <div style="margin-top:25px;">
-            <button type="submit" class="default" style="padding:10px 20px; background:#79aec8; color:white; border:none; border-radius:4px; cursor:pointer;">
-                Save
-            </button>
+        
+        <!-- Content字段（关键：添加文本框样式） -->
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Content:</label>
+            <!-- 强制渲染为大文本框 -->
+            <textarea name="content" id="id_content" rows="10" cols="80" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                {{ form.content.value|default:'' }}
+            </textarea>
         </div>
+        
+        <!-- Status字段 -->
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Status:</label>
+            {{ form.status }}
+        </div>
+        
+        <!-- 按钮 -->
+        <button type="submit" style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+            Publish Post
+        </button>
+        <a href="{% url 'homepage' %}" style="margin-left: 10px; color: #2196F3; text-decoration: none;">Cancel</a>
     </form>
 </div>
+
+<!-- 全局样式：确保所有输入框统一 -->
+<style>
+input[type="text"], select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+</style>
 {% endblock %}
