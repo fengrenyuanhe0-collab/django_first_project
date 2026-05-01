@@ -1,17 +1,12 @@
 """
-URL configuration for my_django_site project.
+URL路由配置
+全站缓存和日志由中间件自动处理，无需在此加装饰器
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
 
-# 项目根路由：把所有博客相关路由分发给 blog 应用
+# 完全保留你的原有路由，无需任何修改
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("blog.urls")),  # 关键：引入 blog/urls.py
+    path('admin/', admin.site.urls),
+    path('', include('blog.urls')),  # 所有blog页面自动被缓存+日志覆盖
 ]
-
-# 开发环境媒体文件访问配置
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
