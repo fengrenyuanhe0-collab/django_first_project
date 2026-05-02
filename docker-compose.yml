@@ -1,0 +1,45 @@
+version: '3.8'  # Compose文件版本，和Docker版本兼容即可
+
+services:
+  # 1. PostgreSQL数据库容器
+  db:
+    image: postgres:15  # 数据库镜像
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/  # 数据持久化（重启容器不丢数据）
+    env_file:
+      - .env  # 读取环境变量
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_DB=${DATABASE_NAME}
+    restart: always  # 容器挂了自动重启
+
+  # 2. Django应用容器
+  web:
+    build: .  # 基于当前目录的Dockerfile构建镜像
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn my_django_site.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app  # 本地代码挂载到容器（改本地代码，容器内实时更新）
+      - static_volume:/app/static  # 静态文件挂载
+    ports:
+      - "8000:8000"  # 本地端口:容器端口
+    env_file:
+      - .env
+    depends_on:
+      - db  # 先启动db，再启动web
+    restart: always
+
+  # 3. Nginx代理容器（处理静态文件+转发请求）
+  nginx:
+    build: ./nginx  # 基于nginx目录的Dockerfile构建
+    ports:
+      - "81:80"  # 本地访问http://localhost:81
+    volumes:
+      - static_volume:/app/static  # 共享静态文件
+    depends_on:
+      - web  # 先启动web，再启动nginx
+
+# 数据卷：持久化数据（数据库、静态文件）
+volumes:
+  postgres_data:
+  static_volume:

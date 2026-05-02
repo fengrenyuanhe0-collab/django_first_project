@@ -195,3 +195,4 @@ django.template.exceptions.TemplateDoesNotExist: blog/post_list.html, blog/post_
 2026-05-02 02:39:09,562 INFO middleware Page accessed - path:/post/create/ | ip:127.0.0.1 | method:GET | user:le
 2026-05-02 02:39:09,563 INFO views Create post attempt | User:le | IP:127.0.0.1 | Method:GET
 2026-05-02 02:39:09,597 INFO basehttp "GET /post/create/ HTTP/1.1" 200 6439
+2026-05-02 03:24:29,529 INFO autoreload C:\Users\Air\Desktop\russion\web中的商业应用\第二学期\django_first_project-3050fb8b4c5fcd0d490f8a26fd247180dbe685d9\my_django_site\settings.py changed, reloading.
