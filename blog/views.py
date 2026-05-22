@@ -32,7 +32,7 @@ from .models import Post, Comment
 logger = logging.getLogger('blog')
 
 # ---------------------- 原有博客列表视图：新增缓存+日志 ----------------------
-@method_decorator(cache_page(60 * 5), name='dispatch')  # 列表页缓存5分钟
+# @method_decorator(cache_page(60 * 5), name='dispatch')
 class PostList(ListView):
     model = Post
     template_name = 'blog/post_list.html'
@@ -45,7 +45,7 @@ class PostList(ListView):
         return super().get(request, *args, **kwargs)
 
 # ---------------------- 原有博客详情视图：新增缓存+日志 ----------------------
-@method_decorator(cache_page(60 * 10), name='dispatch')  # 详情页缓存10分钟
+#@method_decorator(cache_page(60 * 10), name='dispatch')  # 详情页缓存10分钟
 class PostDetail(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'

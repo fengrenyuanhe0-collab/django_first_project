@@ -1,6 +1,4 @@
-Django==5.0.1  # 选你项目用的Django版本，或写>=4.2
-gunicorn==21.2.0  # 生产环境运行Django的服务器
-psycopg2-binary==2.9.9  # PostgreSQL数据库驱动
-python-dotenv==1.0.0  # 读取.env环境变量
+django==5.2.14
 djangorestframework
+gunicorn
 Pillow

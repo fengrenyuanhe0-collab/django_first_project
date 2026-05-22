@@ -9,13 +9,12 @@ import os  # 日志需要
 # 项目根目录（适配你的my_django_site结构）
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 安全密钥（保持你原来的，或替换成自己的）
-SECRET_KEY = 'django-insecure-REPLACE_THIS_WITH_YOUR_OWN_SECRET_KEY'
+# 安全密钥
+SECRET_KEY = 'django-insecure-1234567890abcdefghijklmnopqrstuvwxyz'
 
 # 开发模式
 DEBUG = True
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost"]  # ✅ 修复 Docker 访问问题
 # 已安装应用（保留你原有，新增的功能依赖已包含）
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -25,21 +24,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',  # 你的blog app，必须保留！
+    'rest_framework',
 ]
 
 # 中间件（核心修改：加全站缓存中间件+自定义日志中间件）
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 1. 全站缓存中间件（第一个加载，自动缓存所有页面）
-    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  # Session 中间件
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 2. 全站缓存中间件（最后一个加载）
-    'django.middleware.cache.FetchFromCacheMiddleware',
+   
     
 ]
 
@@ -88,10 +85,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# 静态文件（保留原有）
-STATIC_URL = 'static/'
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# ✅ 修复静态文件（admin 样式正常）
+# ==========================
 
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==================================================
 # 1. SESSION 配置（标准网站必备，适配你的项目）
 # ==================================================
@@ -100,7 +100,7 @@ SESSION_COOKIE_AGE = 14 * 24 * 60 * 60  # 14天有效期
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 关闭浏览器不失效
 SESSION_SAVE_EVERY_REQUEST = True  # 每次请求刷新过期时间
 
-# ==================================================
+"""# ==================================================
 # 2. 全站CACHING 缓存配置（自动覆盖所有页面）
 # ==================================================
 CACHES = {
@@ -114,7 +114,7 @@ CACHE_MIDDLEWARE_SECONDS = 300
 # 缓存前缀（避免和其他项目冲突）
 CACHE_MIDDLEWARE_KEY_PREFIX = 'my_django_site'
 # 缓存使用的别名（对应上面的default缓存）
-CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_ALIAS = 'default'"""
 
 # ==================================================
 # 3. LOGGING 日志配置（自动写入logs目录，记录所有页面访问）
