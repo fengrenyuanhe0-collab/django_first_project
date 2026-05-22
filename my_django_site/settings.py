@@ -5,22 +5,16 @@ Django settings for my_django_site project.
 
 from pathlib import Path
 import os  # 日志需要
-from dotenv import load_dotenv  # 新增：加载.env
-
-# 加载.env环境变量（容器化核心：从外部配置读取敏感信息）
-load_dotenv()
 
 # 项目根目录（适配你的my_django_site结构）
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 安全密钥（从.env读取，容器化时不用改代码）
-SECRET_KEY = os.getenv("SECRET_KEY", 'django-insecure-REPLACE_THIS_WITH_YOUR_OWN_SECRET_KEY')
+# 安全密钥（保持你原来的，或替换成自己的）
+SECRET_KEY = 'django-insecure-REPLACE_THIS_WITH_YOUR_OWN_SECRET_KEY'
 
-# 开发模式（从.env读取，容器内默认关闭DEBUG）
-DEBUG = os.getenv("DEBUG", "True") == "True"
-
-# 允许访问的主机（从.env读取，容器化时允许所有主机）
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") if os.getenv("ALLOWED_HOSTS") else []
+# 开发模式
+DEBUG = True
+ALLOWED_HOSTS = []
 
 # 已安装应用（保留你原有，新增的功能依赖已包含）
 INSTALLED_APPS = [
@@ -46,8 +40,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 2. 全站缓存中间件（最后一个加载）
     'django.middleware.cache.FetchFromCacheMiddleware',
-    # 3. 自定义日志中间件（自动记录所有页面访问日志）
-    'my_django_site.middleware.AllPageLoggingMiddleware',
+    
 ]
 
 # 根路由配置（适配你的my_django_site）
@@ -73,16 +66,11 @@ TEMPLATES = [
 # WSGI配置（适配你的my_django_site）
 WSGI_APPLICATION = 'my_django_site.wsgi.application'
 
-# 数据库（容器化核心：优先从.env读取PostgreSQL配置，本地开发用sqlite）
+# 数据库（保持默认sqlite，不改动）
 DATABASES = {
     'default': {
-        # 容器化用PostgreSQL，本地开发用sqlite
-        'ENGINE': os.getenv("DATABASE_ENGINE", 'django.db.backends.sqlite3'),
-        'NAME': os.getenv("DATABASE_NAME", BASE_DIR / 'db.sqlite3'),
-        'USER': os.getenv("DATABASE_USER", ''),
-        'PASSWORD': os.getenv("DATABASE_PASSWORD", ''),
-        'HOST': os.getenv("DATABASE_HOST", ''),
-        'PORT': os.getenv("DATABASE_PORT", ''),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -100,9 +88,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# 静态文件（容器化核心：添加STATIC_ROOT，让collectstatic收集静态文件）
+# 静态文件（保留原有）
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # 容器化必须：收集静态文件到static目录
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ==================================================
@@ -172,9 +159,3 @@ LOGGING = {
         },
     },
 }
-
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:81',
-    'http://127.0.0.1:81',
-]
